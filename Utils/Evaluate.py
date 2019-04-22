@@ -26,7 +26,7 @@ def getPredictInfo(ypredict, yactual, column=0, weight=0, show=False, filename='
     ff = len([x for x in ypredict[negindex] if x == 1])
 
     text = '  逾期率:' + str(1 - tp / (tp + ff + 0.01)) + " 通过率:" + str((tp + ff) / (tp + fp + tf + ff))
-
+    print(text)
     if show == True:
         pltbadDistribution(yactual, yactual, filename)
 
@@ -79,7 +79,7 @@ def pltbadDistribution(predict, actual, filename=""):
 
 '''
 
-
+#查询要删除得字段
 def descriptDataFrame(train, fliternull=0.8):
     all_index = [column for column in train]
     NullAttribute = []

@@ -76,8 +76,8 @@ def testProcess(chooseindex, X_train, y_train, limit=0.4, coeflist=[], iterators
         lgr.coef_ = coeflist
 
         protoLabelPredict = calt.getLogisticValue(lgr.coef_, X_testNeed)
-        # rocvalue = eval.plotROC(protoLabelPredict, y_testNeed, True,False)
-        rocvalue = 0
+        rocvalue = eval.plotROC(protoLabelPredict, y_testNeed, True,False)
+        #rocvalue = 0
         protoLabelPredict = np.array(protoLabelPredict).reshape(len(protoLabelPredict), 1)
         # eval.pltbadDistribution(protoLabelPredict, y_testNeed, 'imgs/img' + str(i) + '.png')
 

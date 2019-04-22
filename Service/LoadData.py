@@ -1,15 +1,14 @@
 import numpy as np
 import pandas as pd
-import Utils.Evaluate as eval
 import Utils.Consts as consts
+import Utils.Evaluate as eval
 
 
 # 过滤空值
 def fillnull(df):
-    df['XinyanMaxOverdueDays'].fillna('other', inplace=True)  # 特殊处理
     allindex = [column for column in df]
     for i in range(len(allindex)):
-        if isinstance(df[allindex[i]][0], str): continue
+        if isinstance(list(df[allindex[i]])[0], str): continue
         # 统计null得数量，如果不多，就选择填充中位数，否则填充-1
         try:
             countnull = 0
@@ -26,8 +25,7 @@ def fillnull(df):
             1
     selected_features = []
     for i in range(len(allindex)):
-        if (allindex[i] != 'label' and allindex[i] != 'label2' and allindex[i] != 'shifou'
-                and allindex[i] != 'QueryOrgCntD15' and allindex[i] != 'member_id' and allindex[i] != 'mobile'):
+        if (allindex[i] != 'label' and allindex[i] != 'member_id' and allindex[i] != 'mobile'):
             selected_features.append(allindex[i])
     train = df[selected_features]
     return train
@@ -37,109 +35,51 @@ def fillnull(df):
 def getCategeryFeature(df):
     selected_features = [column for column in df]
     categery = []
+    count = 0
+
     for column in selected_features:  # 获取类别属性
-        for j in range(len(df)):
-            if (isinstance(df[column][j], str)):
-                categery.append(column)
-                continue
+        tempvalue = [1 for i in list(df[column]) if isinstance(i, str)]
+        if (len(tempvalue) > 0):
+            categery.append(column)
+        count += 1
     return categery
 
 
-def loaddataAuto(filterMethod=fillnull):
-    train = pd.read_csv('D:\\needData.csv')
+import math
 
-    y_train = train['label2']
+
+def loaddataAuto(filename='D:/hivefile.csv', filterMethod=fillnull):
+    train = pd.read_csv(filename)
+    # eval.descriptDataFrame(train)
+
+    train = train[train["label"] != 2]  # label 0好 1坏 2拒绝
+    y_train = train['label']
+    all_dfindex = [column for column in train]
+    y_train = np.array(y_train)
+    selected_features = []
+    print('filter attributes....')
+    for i in range(len(all_dfindex)):
+        if (all_dfindex[i] != 'label' and all_dfindex[i] != 'id' and all_dfindex[i] != 'member_id'
+                and all_dfindex[i] != 'id_no_de' and all_dfindex[i] != 'mobile' and all_dfindex[
+                    i] not in consts.filterAttribute):
+            selected_features.append(all_dfindex[i])
+    train = train[selected_features]
 
     train = filterMethod(train)  # 去除空值与不需要得属性
 
-    all_dfindex = [column for column in train]
-
-    y_train = np.array(y_train)
-
-    categery = getCategeryFeature(train)
-    train = np.array(train)
-
-    newList = []
-    labelnew = []
-
-    for i in range(len(y_train)):
-        if (y_train[i] < 2):  # 过滤不合适得标签
-            newList.append(list(train[i]))
-            labelnew.append(y_train[i])
-
-    labelnew = np.array(labelnew)
-    newList = np.array(newList)
-
-    for j in range(len(newList[0])):
-        for i in range(len(newList)):
-            if (newList[i][j] == '-9' or newList[i][j] == '-99'):
-                newList[i][j] = '-1'
-
-    return newList, labelnew, all_dfindex, categery
-
-
-def loaddataSimple():
-    train = pd.read_csv('D:\\hivefile.csv')
-    eval.descriptDataFrame(train)
-
-    '''    
-    train['XinyanLoansScore'].fillna(train['XinyanLoansScore'].median(), inplace=True)
-    train['XinyanLoansOrgCount'].fillna(train['XinyanLoansOrgCount'].median(), inplace=True)
-    train['XinyanLoanCount1Month'].fillna(train['XinyanLoanCount1Month'].median(), inplace=True)
-    train['XinyanChargebackFail1Month'].fillna(train['XinyanChargebackFail1Month'].median(), inplace=True)
-    train['XinyanConsfinMaxLimit'].fillna(train['XinyanConsfinMaxLimit'].median(), inplace=True)
-    train['XinyanFinanceMaxLimit'].fillna(train['XinyanFinanceMaxLimit'].median(), inplace=True)
-    train['XinyanConsfinCreditLimit'].fillna(train['XinyanConsfinCreditLimit'].median(), inplace=True)
-    train['XinyanHistorySucFee'].fillna(train['XinyanHistorySucFee'].median(), inplace=True)
-    train['XinyanLatestThreeMonth'].fillna(train['XinyanLatestThreeMonth'].median(), inplace=True)
-    train['XinyanHistoryFailFee'].fillna(train['XinyanHistoryFailFee'].median(), inplace=True)
-    train['XinyanLatestOneMonthSuc'].fillna(train['XinyanLatestOneMonthSuc'].median(), inplace=True)
-    train['XinyanLoansOverdueCount'].fillna(train['XinyanLoansOverdueCount'].median(), inplace=True)
-    train['ConsfinAvgLimit'].fillna(train['ConsfinAvgLimit'].median(), inplace=True)
-    train['XinyanMaxOverdueDays'].fillna('other', inplace=True)
-    train['BaiduLoan2ManyScore'].fillna(train['BaiduLoan2ManyScore'].median(), inplace=True)
-    train['QueryOrgCntM6'].fillna(train['QueryOrgCntM6'].median(), inplace=True)
-    train['HuaceAppStability7d'].fillna(train['HuaceAppStability7d'].median(), inplace=True)
-    train['HuaceFinance7d'].fillna(train['HuaceFinance7d'].median(), inplace=True)
-    train['HuaceLoan180d'].fillna(train['HuaceLoan180d'].median(), inplace=True)
-    train['XinyanScore'].fillna(train['XinyanScore'].median(), inplace=True)
-    train['XinyanConsfinOrgCount'].fillna(train['XinyanConsfinOrgCount'].median(), inplace=True)
-    '''
-
-    allindex = [column for column in train]
-    selected_features = []
-
-    y_train = train['label']
-    y_train = np.array(y_train)
-
-    for i in range(len(allindex)):
-        if (allindex[i] != 'label' and allindex[i] != 'label2' and allindex[i] != 'id' and allindex[i] != 'member_id'
-                and allindex[i] != 'id_no_de' and allindex[i] != 'mobile' and consts in consts.filterAttribute):
-            selected_features.append(allindex[i])
-    train = train[selected_features]
-
-    categery = []
-    for column in selected_features:  # 获取类别属性
-        if (isinstance(train[column][0], str)):
-            categery.append(column)
 
     train = np.array(train)
-    newList = []
-    # 0 好  1坏
-    labelnew = []
-    for i in range(len(y_train)):
-        if (y_train[i] < 2):
-            newList.append(list(train[i]))
-            labelnew.append(y_train[i])
 
-    labelnew = np.array(labelnew)
-    newList = np.array(newList)
+    width = len(train[0])
+    height = len(train)
+    for j in range(width):
+        for i in range(height):  # 对于不同类型得列
+            if (train[i][j] == '-9' or train[i][j] == '-99' or pd.isnull(train[i][j]) or
+                    train[i][j] is None or train[i][j] == None
+                    or train[i][j] == '-1' or train[i][j] == '-1.0' or train[i][j] == ''):
+                train[i][j] = -1
 
-    all_dfindex = selected_features
+    tempdatfarame=pd.DataFrame(train,columns=selected_features)
+    categery = getCategeryFeature(tempdatfarame)  # 获取类别属性
 
-    for j in range(len(newList[0])):
-        for i in range(len(newList)):
-            if (newList[i][j] == '-1' or newList[i][j] == '-9' or newList[i][j] == '-99'):
-                newList[i][j] = '-1'
-
-    return newList, labelnew, all_dfindex, categery
+    return train, y_train, selected_features, categery

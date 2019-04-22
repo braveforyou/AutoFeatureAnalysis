@@ -315,6 +315,7 @@ attributeList = [
 
 
 filterAttribute=[
+    'id',
     'shumei_itfin_loan_overdue_duration',
     'shumei_credit_loan_overdue_duration',
     'huaceproperty7d',
@@ -346,4 +347,5 @@ filterAttribute=[
     'baiduidphonequerytimesy1',
     'baiduidquerytimesy1',
     'car_no',
+    'max_creditlimit_amount'
 ]
