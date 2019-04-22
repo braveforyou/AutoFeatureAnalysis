@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import Utils.Evaluate as eval
 import Utils.Consts as consts
+
+
 # 过滤空值
 def fillnull(df):
     df['XinyanMaxOverdueDays'].fillna('other', inplace=True)  # 特殊处理
@@ -25,7 +27,7 @@ def fillnull(df):
     selected_features = []
     for i in range(len(allindex)):
         if (allindex[i] != 'label' and allindex[i] != 'label2' and allindex[i] != 'shifou'
-            and allindex[i] != 'QueryOrgCntD15' and allindex[i] != 'member_id' and allindex[i] != 'mobile'):
+                and allindex[i] != 'QueryOrgCntD15' and allindex[i] != 'member_id' and allindex[i] != 'mobile'):
             selected_features.append(allindex[i])
     train = df[selected_features]
     return train
@@ -61,28 +63,24 @@ def loaddataAuto(filterMethod=fillnull):
     labelnew = []
 
     for i in range(len(y_train)):
-        if (y_train[i] < 2):#过滤不合适得标签
+        if (y_train[i] < 2):  # 过滤不合适得标签
             newList.append(list(train[i]))
             labelnew.append(y_train[i])
 
     labelnew = np.array(labelnew)
     newList = np.array(newList)
 
-
     for j in range(len(newList[0])):
         for i in range(len(newList)):
-            if (newList[i][j] == '-1' or newList[i][j] == '-9' or newList[i][j] == '-99'):
+            if (newList[i][j] == '-9' or newList[i][j] == '-99'):
                 newList[i][j] = '-1'
 
     return newList, labelnew, all_dfindex, categery
 
 
-
-
 def loaddataSimple():
     train = pd.read_csv('D:\\hivefile.csv')
     eval.descriptDataFrame(train)
-
 
     '''    
     train['XinyanLoansScore'].fillna(train['XinyanLoansScore'].median(), inplace=True)
@@ -114,13 +112,9 @@ def loaddataSimple():
     y_train = train['label']
     y_train = np.array(y_train)
 
-
-
-
     for i in range(len(allindex)):
-        if (allindex[i] != 'label' and allindex[i] != 'label2' and allindex[i] != 'shifou'
-            and allindex[i] != 'QueryOrgCntD15' and allindex[i] != 'member_id' and allindex[i] != 'id_no_de'and allindex[i] != 'mobile' and consts in    consts.filterAttribute
-    ):
+        if (allindex[i] != 'label' and allindex[i] != 'label2' and allindex[i] != 'id' and allindex[i] != 'member_id'
+                and allindex[i] != 'id_no_de' and allindex[i] != 'mobile' and consts in consts.filterAttribute):
             selected_features.append(allindex[i])
     train = train[selected_features]
 

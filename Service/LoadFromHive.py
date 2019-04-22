@@ -3,22 +3,18 @@
 
 from impala.dbapi import connect
 import datetime
+import Utils.Consts as consts
+import numpy as np
+import pandas as pd
+
+attributeList= consts.attributeList
+'''
+本部分用于从 10.32.16.124 /opt/tiefan/test_Hive_Connection/ 运行脚本，从hive中获取宽表得数据
+
+'''
 
 
-def writeListContent(list1, path):
-    fl = open(path, 'a')
-    count = 0
-    for content in list1:
-        try:
-            fl.write(str(content))
-            fl.write("\n")
-        except:
-            count += 1
-            raise
-    fl.close()
 
-
-attributeList= Consts.attributeList
 
 def getSql():
     cql='select '
@@ -27,8 +23,7 @@ def getSql():
     cql+="b.label as label from rdw.pdl_wide_table  a JOIN  rtmp.pdl_del_zhima1 b ON a.member_id = b.member_id and a.mobile_de=b.mobile"
     return cql
 
-import numpy as np
-import pandas as pd
+
 
 def loadFromHive():
     print('begain word')
@@ -52,7 +47,6 @@ def loadFromHive():
     scvfile=pd.DataFrame(Data,columns=attributeList)
 
     scvfile.to_csv("hivefile.csv",encoding="utf_8_sig")
-   # print(Data[:,:4])
 
     print('cost:', (datetime.datetime.now() - begain))
 

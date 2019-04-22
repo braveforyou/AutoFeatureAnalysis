@@ -1,19 +1,16 @@
 from numpy import *
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
-
-sns.set(style="whitegrid")
-from pandas import Series, DataFrame
-
+import numpy as np
+from pandas import  DataFrame
+sns.set(style="whitegrid")#python 可视化
 
 # 获取模型的预测效果，包括精准率召回率等,输入预测值和实际值就好
 def getPredictInfo(ypredict, yactual, column=0, weight=0, show=False, filename=''):
     countpos = 0;
     countneg = 0;
-    # pos:1 neg:0
+
     for i in range(len(yactual)):
         if (yactual[i] == 0):
             countneg += 1
@@ -85,39 +82,29 @@ def pltbadDistribution(predict, actual, filename=""):
 
 def descriptDataFrame(train, fliternull=0.8):
     all_index = [column for column in train]
-    print('all_index:', all_index)
     NullAttribute = []
     for i in range(len(all_index)):
         nonecount = 0
         records = train[all_index[i]]
         for j in range(len(records)):
             temprecord = records[j]
-
             if (pd.isnull(temprecord) or records[j] is None or records[j] == None or records[j] == NaN or records[
                 j] == '' or records[j] == '-1' or records[j] == '-9' or records[j] == -1 or records[j] == -9):
                 nonecount += 1
-
-        print('+++++++++++++', all_index[i], '+++++++++++++')
+        print('index-',i,':', all_index[i])
         print('NoneRecords:', nonecount, "NoneRatio:", nonecount / len(train))
         if (nonecount / len(train) > fliternull and all_index[i].find('black') == -1):
             NullAttribute.append([all_index[i], nonecount / len(train), (len(train) - nonecount)])
-        print(train[all_index[i]].describe())
+        #print(train[all_index[i]].describe())
 
-    print('NullAttribute:')
     NullAttribute = np.array(NullAttribute)
-
-    print('=========')
-
+    print('=====NullAttribute ====')
     print(NullAttribute[:, 1].argsort())
     NullAttribute = NullAttribute[NullAttribute[:, 1].argsort()]
     print(NullAttribute)
     return list(NullAttribute[:, 0])
 
 
-# 卡方检测，数据转换，直接得到最优秀的K个属性
-def Kafang(X, Y, k):
-    model1 = SelectKBest(chi2, k=k)  # 选择k个最佳特征
-    return model1.fit_transform(X, Y)
 
 
 # ROC是对于连续值predStrengths变化而造成的TPR和FPR的变化曲线，这个predStrengths应该是算法中的一个关键的参数

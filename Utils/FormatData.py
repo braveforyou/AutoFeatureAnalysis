@@ -1,7 +1,7 @@
 from numpy import *
 import numpy as np
 import pandas as pd
-from pandas import Series, DataFrame
+from pandas import  DataFrame
 from sklearn import preprocessing
 
 
@@ -36,7 +36,6 @@ def convertTrainAndTestData(traindata, testdata,pos='scale'):
         xtrain=preprocessing.robust_scale(np.array(all_df))
     else:
         xtrain = preprocessing.minmax_scale(np.array(all_df))
-    #xtrain=xtrain+pos#添加偏移，主要用于使所有值变成正值
     return xtrain[:xlen], xtrain[xlen:],all_dfindex
 
 
@@ -49,7 +48,6 @@ def convertTrainData(traindata,pos='scale'):
 
     xtrain = np.array(traindata)
     xtrain = list(xtrain)
-    xlen = len(xtrain)
 
     all_dfindex = [column for column in traindata]
     xtrain = DataFrame(xtrain, columns=all_dfindex)
@@ -65,10 +63,7 @@ def convertTrainData(traindata,pos='scale'):
         xtrain=preprocessing.robust_scale(np.array(all_df))
     else:
         xtrain = preprocessing.minmax_scale(np.array(all_df))
-    #xtrain=xtrain+pos#添加偏移，主要用于使所有值变成正值
     return xtrain,all_dfindex
-
-
 
 
 

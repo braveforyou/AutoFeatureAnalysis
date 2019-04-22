@@ -40,7 +40,6 @@ def trainProcess(X_train, y_train, chooseindex=[], limit=0.5, cweight=0.25):
         X_trainNeed, X_testNeed, all_dfindex = format.convertTrainAndTestData(X_trainNeed, X_testNeed, 'scale')
         # 进行逻辑回归
         lgr = LogisticRegression(C=cweight, solver='newton-cg')
-        # lgr = LogisticRegression(C=cweight, solver='newton-cg')
         lgr.fit(X_trainNeed, y_trainNeed)
         AllWeights.append(lgr.coef_)
 

@@ -4,10 +4,6 @@ import Utils.Model as trainModel
 import numpy as np
 import Utils.seabornPlot as sns
 
-'''
-当前版本下
-'''
-
 
 # chooseFeatures 选择多少属性  iterators测试数据 迭代轮数
 def Main(readMethod, chooseFeatures=40, iterators=6, method=chooseAttr.filterFeatureScoreDecision, cweight=0.35):
