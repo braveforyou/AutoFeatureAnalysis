@@ -35,51 +35,45 @@ def fillnull(df):
 def getCategeryFeature(df):
     selected_features = [column for column in df]
     categery = []
-    count = 0
 
     for column in selected_features:  # 获取类别属性
+        temp2 = [x for x in df[column] if str(x).find('-') > 0]
         tempvalue = [1 for i in list(df[column]) if isinstance(i, str)]
-        if (len(tempvalue) > 0):
+        if (len(tempvalue) > 0 or len(temp2) > 0):
             categery.append(column)
-        count += 1
+
     return categery
 
 
-import math
-
-
+# 获取csv文件
 def loaddataAuto(filename='D:/hivefile.csv', filterMethod=fillnull):
     train = pd.read_csv(filename)
     # eval.descriptDataFrame(train)
 
     train = train[train["label"] != 2]  # label 0好 1坏 2拒绝
+
     y_train = train['label']
     all_dfindex = [column for column in train]
     y_train = np.array(y_train)
-    selected_features = []
-    print('filter attributes....')
-    for i in range(len(all_dfindex)):
-        if (all_dfindex[i] != 'label' and all_dfindex[i] != 'id' and all_dfindex[i] != 'member_id'
-                and all_dfindex[i] != 'id_no_de' and all_dfindex[i] != 'mobile' and all_dfindex[
-                    i] not in consts.filterAttribute):
-            selected_features.append(all_dfindex[i])
+
+    selected_features = [all_dfindex[i] for i in range(len(all_dfindex))
+                         if all_dfindex[i] not in ('label', 'id', 'member_id', 'id_no_de', 'mobile')
+                         and all_dfindex[i] not in consts.filterAttribute]
     train = train[selected_features]
 
     train = filterMethod(train)  # 去除空值与不需要得属性
-
-
     train = np.array(train)
 
     width = len(train[0])
     height = len(train)
     for j in range(width):
-        for i in range(height):  # 对于不同类型得列
-            if (train[i][j] == '-9' or train[i][j] == '-99' or pd.isnull(train[i][j]) or
-                    train[i][j] is None or train[i][j] == None
-                    or train[i][j] == '-1' or train[i][j] == '-1.0' or train[i][j] == ''):
+        for i in range(height):  # 替换与补充元素
+            if (train[i][j] in ('-9', '-99', '-1.0', '-1', '') or pd.isnull(train[i][j])
+                    or train[i][j] is None or train[i][j] == None):
                 train[i][j] = -1
 
-    tempdatfarame=pd.DataFrame(train,columns=selected_features)
+    tempdatfarame = pd.DataFrame(train, columns=selected_features)
     categery = getCategeryFeature(tempdatfarame)  # 获取类别属性
 
     return train, y_train, selected_features, categery
+loaddataAuto()

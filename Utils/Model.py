@@ -28,16 +28,16 @@ def randomPartSingleData(X_train, y_train, partsize=8):
 
 
 # 训练过程
-def trainProcess(X_train, y_train, chooseindex=[], limit=0.5, cweight=0.25):
+def trainProcess(X_train, y_train, chooseindex=[],chooseAttr=[], categery=[],limit=0.5, cweight=0.25):
     AllWeights = []
 
-    for i in range(6):
+    for i in range(3):
         # 随机划分数据集
         X_trainNeed, X_testNeed, y_trainNeed, y_testNeed = randomPartSingleData(X_train[:, chooseindex], y_train)
-        X_trainNeed = DataFrame(X_trainNeed, columns=chooseindex)
-        X_testNeed = DataFrame(X_testNeed, columns=chooseindex)
+        X_trainNeed = DataFrame(X_trainNeed, columns=chooseAttr)
+        X_testNeed = DataFrame(X_testNeed, columns=chooseAttr)
         # 对数据集进行归一化等操作
-        X_trainNeed, X_testNeed, all_dfindex = format.convertTrainAndTestData(X_trainNeed, X_testNeed, 'scale')
+        X_trainNeed, X_testNeed, all_dfindex = format.convertTrainAndTestData(X_trainNeed, X_testNeed, 'scale',categery)
         # 进行逻辑回归
         lgr = LogisticRegression(C=cweight, solver='newton-cg')
         lgr.fit(X_trainNeed, y_trainNeed)
@@ -54,22 +54,20 @@ def trainProcess(X_train, y_train, chooseindex=[], limit=0.5, cweight=0.25):
     mide = np.median(labelpredict)
 
     print('limit:', limit, 'mide:', mide, ' min:', np.min(labelpredict), ' max:', np.max(labelpredict))
-    labelpredict = format.adjust(labelpredict, limit)
-
-    eval.getPredictInfo(labelpredict, y_testNeed, show=False)
+    #labelpredict = format.adjust(labelpredict, limit)
+    #eval.getPredictInfo(labelpredict, y_testNeed, show=True)
     return coef, chooseindex
 
 
 # 测试当前获得变量得有效性 coeflist
-def testProcess(chooseindex, X_train, y_train, limit=0.4, coeflist=[], iterators=10, Cweight=3.5):
-    print(chooseindex)
+def testProcess( X_train, y_train, chooseindex,chooseAttr,limit=0.4, coeflist=[],categery=[], iterators=10, Cweight=3.5):
     Xlist = []
     for i in range(iterators):
         X_trainNeed, X_testNeed, y_trainNeed, y_testNeed = randomPartSingleData(X_train[:, chooseindex], y_train,
                                                                                 partsize=6)
-        X_trainNeed = DataFrame(X_trainNeed, columns=chooseindex)
-        X_testNeed = DataFrame(X_testNeed, columns=chooseindex)
-        X_trainNeed, X_testNeed, all_dfindex = format.convertTrainAndTestData(X_trainNeed, X_testNeed, 'scale')
+        X_trainNeed = DataFrame(X_trainNeed, columns=chooseAttr)
+        X_testNeed = DataFrame(X_testNeed, columns=chooseAttr)
+        X_trainNeed, X_testNeed, all_dfindex = format.convertTrainAndTestData(X_trainNeed, X_testNeed, 'scale',categery)
 
         lgr = LogisticRegression(C=Cweight, solver='newton-cg')
         lgr.fit(X_trainNeed, y_trainNeed)
@@ -79,7 +77,7 @@ def testProcess(chooseindex, X_train, y_train, limit=0.4, coeflist=[], iterators
         rocvalue = eval.plotROC(protoLabelPredict, y_testNeed, True,False)
         #rocvalue = 0
         protoLabelPredict = np.array(protoLabelPredict).reshape(len(protoLabelPredict), 1)
-        # eval.pltbadDistribution(protoLabelPredict, y_testNeed, 'imgs/img' + str(i) + '.png')
+        eval.pltbadDistribution(protoLabelPredict, y_testNeed, 'imgs/img' + str(i) + '.png')
 
         labelpredict = format.adjust(protoLabelPredict, limit)
         x = eval.getPredictInfo(labelpredict, y_testNeed, show=False)
@@ -87,18 +85,3 @@ def testProcess(chooseindex, X_train, y_train, limit=0.4, coeflist=[], iterators
     return Xlist, [], chooseindex, rocvalue
 
 
-# 测试当前获得变量得有效性 coeflist
-def predictSingle(chooseindex, X_train, Xsingle, limit=0.4, coeflist=[], Cweight=3.5):
-    X_train = X_train[:, chooseindex]
-    Xsingle = Xsingle[:, chooseindex]
-
-    X_trainNeed = DataFrame(X_train, columns=chooseindex)
-    X_testNeed = DataFrame(Xsingle, columns=chooseindex)
-    X_trainNeed, X_testNeed, all_dfindex = format.convertTrainAndTestData(X_trainNeed, X_testNeed, 'scale')
-
-    lgr = LogisticRegression(C=Cweight, solver='newton-cg')
-    lgr.coef_ = coeflist
-
-    protoLabelPredict = calt.getLogisticValue(lgr.coef_, X_testNeed)
-    if (protoLabelPredict[0] >= limit): return 1
-    return 0

@@ -159,11 +159,6 @@ def sort_by_value(inputdic):
 
 # 随机抽取index,给定列表长度，通过partsize来抽取下表，分为训练集与测试集
 def chooseIndex(rangesize, partsize=8):
-    trainindex = []
-    testindex = []
-    for i in range(rangesize):
-        if (random.randint(1, partsize) != 3):
-            trainindex.append(i)
-        else:
-            testindex.append(i)
+    trainindex=[i for i in range(rangesize) if random.randint(1, partsize) != 3]
+    testindex=[i for i in range(rangesize) if i not in trainindex]
     return trainindex, testindex

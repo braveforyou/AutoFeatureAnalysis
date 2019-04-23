@@ -6,11 +6,13 @@ from sklearn import preprocessing
 
 
 # 融合训练集和预测集，统一标准化和onohot
-def convertTrainAndTestData(traindata, testdata, pos='scale'):
-    categery = []
-    for column in traindata:  # 获取类别属性，对于类别属性后面需要进行数值化转换
-        if (isinstance(traindata[column][0], str)):
-            categery.append(column)
+def convertTrainAndTestData(traindata, testdata, pos='scale', categery=[]):
+    if (categery == []):
+        for column in traindata:  # 获取类别属性，对于类别属性后面需要进行数值化转换
+            temp2 = [x for x in traindata[column] if str(x).find('-') != -1]
+            temp = [x for x in traindata[column] if isinstance(x, str)]
+            if (len(temp) > 0 or len(temp2) > 0):
+                categery.append(column)
 
     xtrain = np.array(traindata)
     xtrain = list(xtrain)
@@ -42,8 +44,9 @@ def convertTrainAndTestData(traindata, testdata, pos='scale'):
 def convertTrainData(traindata, pos='scale'):
     categery = []
     for column in traindata:  # 获取类别属性，对于类别属性后面需要进行数值化转换
+        temp2 = [x for x in traindata[column] if str(x).find('-') != -1]
         typeList = [1 for x in traindata[column] if isinstance(x, str)]
-        if (len(typeList) > 0):
+        if (len(typeList) > 0 or len(temp2) > 0):
             categery.append(column)
 
     xtrain = np.array(traindata)

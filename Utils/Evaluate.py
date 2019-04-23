@@ -3,19 +3,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from pandas import  DataFrame
-sns.set(style="whitegrid")#python 可视化
+from pandas import DataFrame
+
+sns.set(style="whitegrid")
+
 
 # 获取模型的预测效果，包括精准率召回率等,输入预测值和实际值就好
 def getPredictInfo(ypredict, yactual, column=0, weight=0, show=False, filename=''):
-    countpos = 0;
-    countneg = 0;
-
-    for i in range(len(yactual)):
-        if (yactual[i] == 0):
-            countneg += 1
-        else:
-            countpos += 1
 
     posindex = [i for i, x in enumerate(yactual) if x == 1]
     negindex = [i for i, x in enumerate(yactual) if x == 0]
@@ -25,8 +19,7 @@ def getPredictInfo(ypredict, yactual, column=0, weight=0, show=False, filename='
     tf = len([x for x in ypredict[negindex] if x == 0])
     ff = len([x for x in ypredict[negindex] if x == 1])
 
-    text = '  逾期率:' + str(1 - tp / (tp + ff + 0.01)) + " 通过率:" + str((tp + ff) / (tp + fp + tf + ff))
-    print(text)
+    text = '逾期率:' + str(1 - tp / (tp + ff + 0.01)) + " 通过率:" + str((tp + ff) / (tp + fp + tf + ff))
     if show == True:
         pltbadDistribution(yactual, yactual, filename)
 
@@ -59,7 +52,7 @@ def pltbadDistribution(predict, actual, filename=""):
 
     ax.legend(ncol=2, loc="lower right", frameon=True)
     ax.set(xlim=(0, 24), ylabel="",
-           xlabel="Automobile collisions per billion miles")
+           xlabel="predict value range")
     if (filename == ''):
         plt.show()
     else:
@@ -74,12 +67,10 @@ def pltbadDistribution(predict, actual, filename=""):
 
 另外，对于这种缺失值太多的，应该怎么去衡量呢？作为评分，某些值得贡献要大才具有分辨性，但是模糊的部分也得要贡献足够小才行。
 需要一个公式
-
-
-
 '''
 
-#查询要删除得字段
+
+# 查询要删除得字段
 def descriptDataFrame(train, fliternull=0.8):
     all_index = [column for column in train]
     NullAttribute = []
@@ -91,11 +82,11 @@ def descriptDataFrame(train, fliternull=0.8):
             if (pd.isnull(temprecord) or records[j] is None or records[j] == None or records[j] == NaN or records[
                 j] == '' or records[j] == '-1' or records[j] == '-9' or records[j] == -1 or records[j] == -9):
                 nonecount += 1
-        print('index-',i,':', all_index[i])
+        print('index-', i, ':', all_index[i])
         print('NoneRecords:', nonecount, "NoneRatio:", nonecount / len(train))
         if (nonecount / len(train) > fliternull and all_index[i].find('black') == -1):
             NullAttribute.append([all_index[i], nonecount / len(train), (len(train) - nonecount)])
-        #print(train[all_index[i]].describe())
+        print(train[all_index[i]].describe())
 
     NullAttribute = np.array(NullAttribute)
     print('=====NullAttribute ====')
@@ -103,8 +94,6 @@ def descriptDataFrame(train, fliternull=0.8):
     NullAttribute = NullAttribute[NullAttribute[:, 1].argsort()]
     print(NullAttribute)
     return list(NullAttribute[:, 0])
-
-
 
 
 # ROC是对于连续值predStrengths变化而造成的TPR和FPR的变化曲线，这个predStrengths应该是算法中的一个关键的参数

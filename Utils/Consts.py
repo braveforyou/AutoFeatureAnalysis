@@ -16,7 +16,7 @@ attributeList = [
     'idcard_address',
     'idcard_valid_period',
     'status',
-    'last_loan_date', # todo 需要处理，上一次借款时间需要处理成距离上一次借款多久了
+    'last_loan_date',  # todo 需要处理，上一次借款时间需要处理成距离上一次借款多久了
     'idbaiduloan2manyscore',
     'baiduidquerytimesd7',
     'baiduidphonequerytimesd7',
@@ -275,7 +275,6 @@ attributeList = [
     'rn_cr',
 ]
 
-
 '''
 空值比例大于80%得  非名单类得一律踢除掉
  ['shumei_itfin_loan_overdue_duration' '0.9806706926525757' '845']
@@ -312,10 +311,10 @@ attributeList = [
  ['car_no' '1.0' '0']]
 '''
 
-
-
-filterAttribute=[
+filterAttribute = [
     'id',
+    'id_no_de',
+    'mobile_de',
     'shumei_itfin_loan_overdue_duration',
     'shumei_credit_loan_overdue_duration',
     'huaceproperty7d',
@@ -347,5 +346,39 @@ filterAttribute=[
     'baiduidphonequerytimesy1',
     'baiduidquerytimesy1',
     'car_no',
-    'max_creditlimit_amount'
+    'max_creditlimit_amount',
+    'mail',
+    'rn_td',
+    'rn_td2',
+    'rn_sm',
+    'rn_cr',
+    'rn_ps',
+    'rn_zm',
+    'rn_xyb',
+    'status',
+    'xinyancode',
+    'idcard_address',  # 几乎唯一性
+
+    'idcard_valid_period',
+
+    'rn_hc',
+    'rn_zm',
+    'rn_ps',
+    'rn_jd',
+    'xinyancode',
+    'latestoverduetime',
+    'last_loan_date',
+    'rn_xyb',
+    'rn_sm',
+    'effectivenum',
+    'totalnum',
+    'rn_td',
+    'rn_td2',
+    'score_behavior',
+    'score_object',
+    'score_all',
+    'rn_cr',
+    # +++++++++++ 下面可以转换为时间长度
+    'latestoverduetime',
+    'last_loan_date',
 ]
